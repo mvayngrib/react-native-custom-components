@@ -1,44 +1,27 @@
 /**
- * Copyright (c) 2015, Facebook, Inc.  All rights reserved.
+ * Copyright (c) 2015-present, Alibaba Group Holding Limited.
+ * All rights reserved.
  *
- * Facebook, Inc. ("Facebook") owns all right, title and interest, including
- * all intellectual property and other proprietary rights, in and to the React
- * Native CustomComponents software (the "Software").  Subject to your
- * compliance with these terms, you are hereby granted a non-exclusive,
- * worldwide, royalty-free copyright license to (1) use and copy the Software;
- * and (2) reproduce and distribute the Software as part of your own software
- * ("Your Software").  Facebook reserves all rights not expressly granted to
- * you in this license agreement.
+ * Copyright (c) 2015-present, Facebook, Inc.
+ * All rights reserved.
  *
- * THE SOFTWARE AND DOCUMENTATION, IF ANY, ARE PROVIDED "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES (INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.
- * IN NO EVENT SHALL FACEBOOK OR ITS AFFILIATES, OFFICERS, DIRECTORS OR
- * EMPLOYEES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * @providesModule ReactNavigatorNavigationBar
  */
 'use strict';
 
-var React = require('react');
-var NavigatorNavigationBarStylesAndroid = require('./NavigatorNavigationBarStylesAndroid');
-var NavigatorNavigationBarStylesIOS = require('./NavigatorNavigationBarStylesIOS');
+import React, { Component } from 'react';
+import PropTypes from 'prop-types'
+import NavigatorNavigationBarStylesAndroid from './NavigatorNavigationBarStylesAndroid';
+import NavigatorNavigationBarStylesIOS from './NavigatorNavigationBarStylesIOS';
 import {
   Platform,
   StyleSheet,
   View,
-  ViewPropTypes,
-} from 'react-native';
-var PropTypes = require('prop-types');
+  Dimensions
+} from 'react-native'
 
-var guid = require('./guid');
-
-var { Map } = require('immutable');
+import { Map } from 'immutable';
+import autobind from 'autobind-decorator';
 
 var COMPONENT_NAMES = ['Title', 'LeftButton', 'RightButton'];
 
@@ -53,7 +36,22 @@ var navStatePresentedIndex = function(navState) {
   return navState.observedTopOfStack;
 };
 
-class NavigatorNavigationBar extends React.Component {
+class NavigatorNavigationBar extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this._components = {};
+    this._descriptors = {};
+
+    COMPONENT_NAMES.forEach(componentName => {
+      this._components[componentName] = new Map();
+      this._descriptors[componentName] = new Map();
+    });
+
+    this._handleResize = this._handleResize.bind(this)
+  }
+
   static propTypes = {
     navigator: PropTypes.object,
     routeMapper: PropTypes.shape({
@@ -66,43 +64,26 @@ class NavigatorNavigationBar extends React.Component {
       presentedIndex: PropTypes.number,
     }),
     navigationStyles: PropTypes.object,
-    style: ViewPropTypes.style,
-  };
+    style: View.propTypes.style,
+  }
 
-  static Styles = NavigatorNavigationBarStyles;
-  static StylesAndroid = NavigatorNavigationBarStylesAndroid;
-  static StylesIOS = NavigatorNavigationBarStylesIOS;
+  static statics = {
+    Styles: NavigatorNavigationBarStyles,
+    StylesAndroid: NavigatorNavigationBarStylesAndroid,
+    StylesIOS: NavigatorNavigationBarStylesIOS,
+  }
 
   static defaultProps = {
     navigationStyles: NavigatorNavigationBarStyles,
-  };
-
-  componentWillMount() {
-    this._reset();
   }
 
-  /**
-   * Stop transtion, immediately resets the cached state and re-render the
-   * whole view.
-   */
-  immediatelyRefresh = () => {
-    this._reset();
-    this.forceUpdate();
-  };
-
-  _reset = () => {
-    this._key = guid();
-    this._reusableProps = {};
-    this._components = {};
-    this._descriptors = {};
-
-    COMPONENT_NAMES.forEach(componentName => {
-      this._components[componentName] = new Map();
-      this._descriptors[componentName] = new Map();
-    });
-  };
-
-  _getReusableProps = (/*string*/componentName, /*number*/index) => /*object*/ {
+  _getReusableProps(
+    /* string */componentName,
+    /* number */index
+  ) /* object */ {
+    if (!this._reusableProps) {
+      this._reusableProps = {};
+    }
     var propStack = this._reusableProps[componentName];
     if (!propStack) {
       propStack = this._reusableProps[componentName] = [];
@@ -112,14 +93,14 @@ class NavigatorNavigationBar extends React.Component {
       props = propStack[index] = {style:{}};
     }
     return props;
-  };
+  }
 
-  _updateIndexProgress = (
-    /*number*/progress,
-    /*number*/index,
-    /*number*/fromIndex,
-    /*number*/toIndex,
-  ) => {
+  _updateIndexProgress(
+    /* number */progress,
+    /* number */index,
+    /* number */fromIndex,
+    /* number */toIndex
+  ) {
     var amount = toIndex > fromIndex ? progress : (1 - progress);
     var oldDistToCenter = index - fromIndex;
     var newDistToCenter = index - toIndex;
@@ -136,45 +117,68 @@ class NavigatorNavigationBar extends React.Component {
       interpolate = this.props.navigationStyles.Interpolators.RightToLeft;
     }
 
-    COMPONENT_NAMES.forEach(function (componentName) {
+    COMPONENT_NAMES.forEach(function(componentName) {
       var component = this._components[componentName].get(this.props.navState.routeStack[index]);
       var props = this._getReusableProps(componentName, index);
       if (component && interpolate[componentName](props.style, amount)) {
-        props.pointerEvents = props.style.opacity === 0 ? 'none' : 'box-none';
         component.setNativeProps(props);
       }
     }, this);
-  };
+  }
 
-  updateProgress = (/*number*/progress, /*number*/fromIndex, /*number*/toIndex) => {
+  updateProgress(
+    /* number */progress,
+    /* number */fromIndex,
+    /* number */toIndex
+  ) {
     var max = Math.max(fromIndex, toIndex);
     var min = Math.min(fromIndex, toIndex);
     for (var index = min; index <= max; index++) {
       this._updateIndexProgress(progress, index, fromIndex, toIndex);
     }
-  };
+  }
+
+  componentWillMount() {
+    window.addEventListener('resize', this._handleResize)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._handleResize)
+    clearTimeout(this._resizeTimeout)
+  }
+
+  _handleResize() {
+    const self = this
+    clearTimeout(this._resizeTimeout)
+    // debounce
+    this._resizeTimeout = setTimeout(function () {
+      self.setState({ dimensions: Dimensions.get('window') })
+    }, 100)
+  }
 
   render() {
     var navBarStyle = {
       height: this.props.navigationStyles.General.TotalNavHeight,
     };
     var navState = this.props.navState;
-    var components = navState.routeStack.map((route, index) =>
-      COMPONENT_NAMES.map(componentName =>
-        this._getComponent(componentName, route, index)
-      )
-    );
+    var components = COMPONENT_NAMES.map(function(componentName) {
+      return navState.routeStack.map(
+        this._getComponent.bind(this, componentName)
+      );
+    }, this);
 
     return (
-      <View
-        key={this._key}
-        style={[styles.navBarContainer, navBarStyle, this.props.style]}>
+      <View style={[styles.navBarContainer, navBarStyle, this.props.style]}>
         {components}
       </View>
     );
   }
 
-  _getComponent = (/*string*/componentName, /*object*/route, /*number*/index) => /*?Object*/ {
+  _getComponent(
+    /* string */componentName,
+    /* object */route,
+    /* number */index
+  ) /* ?Object */ {
     if (this._descriptors[componentName].includes(route)) {
       return this._descriptors[componentName].get(route);
     }
@@ -191,8 +195,7 @@ class NavigatorNavigationBar extends React.Component {
       return null;
     }
 
-    var componentIsActive = index === navStatePresentedIndex(this.props.navState);
-    var initialStage = componentIsActive ?
+    var initialStage = index === navStatePresentedIndex(this.props.navState) ?
       this.props.navigationStyles.Stages.Center :
       this.props.navigationStyles.Stages.Left;
     rendered = (
@@ -200,7 +203,6 @@ class NavigatorNavigationBar extends React.Component {
         ref={(ref) => {
           this._components[componentName] = this._components[componentName].set(route, ref);
         }}
-        pointerEvents={componentIsActive ? 'box-none' : 'none'}
         style={initialStage[componentName]}>
         {content}
       </View>
@@ -208,8 +210,9 @@ class NavigatorNavigationBar extends React.Component {
 
     this._descriptors[componentName] = this._descriptors[componentName].set(route, rendered);
     return rendered;
-  };
-}
+  }
+
+};
 
 
 var styles = StyleSheet.create({
@@ -221,5 +224,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
 });
+
+autobind(NavigatorNavigationBar);
 
 module.exports = NavigatorNavigationBar;

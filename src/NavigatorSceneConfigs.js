@@ -1,79 +1,34 @@
 /**
- * Copyright (c) 2015, Facebook, Inc.  All rights reserved.
+ * Copyright (c) 2015-present, Alibaba Group Holding Limited.
+ * All rights reserved.
  *
- * Facebook, Inc. ("Facebook") owns all right, title and interest, including
- * all intellectual property and other proprietary rights, in and to the React
- * Native CustomComponents software (the "Software").  Subject to your
- * compliance with these terms, you are hereby granted a non-exclusive,
- * worldwide, royalty-free copyright license to (1) use and copy the Software;
- * and (2) reproduce and distribute the Software as part of your own software
- * ("Your Software").  Facebook reserves all rights not expressly granted to
- * you in this license agreement.
+ * Copyright (c) 2015-present, Facebook, Inc.
+ * All rights reserved.
  *
- * THE SOFTWARE AND DOCUMENTATION, IF ANY, ARE PROVIDED "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES (INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.
- * IN NO EVENT SHALL FACEBOOK OR ITS AFFILIATES, OFFICERS, DIRECTORS OR
- * EMPLOYEES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THE SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * @providesModule ReactNavigatorSceneConfigs
  */
 'use strict';
 
 import {
   Dimensions,
-  I18nManager,
-  PixelRatio,
-} from 'react-native';
-
-var buildStyleInterpolator = require('./buildStyleInterpolator');
-
-var IS_RTL = I18nManager.isRTL;
+  PixelRatio
+} from 'react-native'
+import buildStyleInterpolator from './buildStyleInterpolator';
 
 var SCREEN_WIDTH = Dimensions.get('window').width;
 var SCREEN_HEIGHT = Dimensions.get('window').height;
-var PIXEL_RATIO = PixelRatio.get();
-
-var ToTheLeftIOS = {
-  transformTranslate: {
-    from: {x: 0, y: 0, z: 0},
-    to: {x: -SCREEN_WIDTH * 0.3, y: 0, z: 0},
-    min: 0,
-    max: 1,
-    type: 'linear',
-    extrapolate: true,
-    round: PIXEL_RATIO,
-  },
-  opacity: {
-    value: 1.0,
-    type: 'constant',
-  },
-};
-
-var ToTheRightIOS = {
-  ...ToTheLeftIOS,
-  transformTranslate: {
-    from: {x: 0, y: 0, z: 0},
-    to: {x: SCREEN_WIDTH * 0.3, y: 0, z: 0},
-  },
-};
 
 var FadeToTheLeft = {
   // Rotate *requires* you to break out each individual component of
   // rotation (x, y, z, w)
   transformTranslate: {
     from: {x: 0, y: 0, z: 0},
-    to: {x: -Math.round(SCREEN_WIDTH * 0.3), y: 0, z: 0},
+    to: {x: -Math.round(Dimensions.get('window').width * 0.3), y: 0, z: 0},
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   // Uncomment to try rotation:
   // Quick guide to reasoning about rotations:
@@ -105,12 +60,12 @@ var FadeToTheLeft = {
   },
   translateX: {
     from: 0,
-    to: -Math.round(SCREEN_WIDTH * 0.3),
+    to: -Math.round(Dimensions.get('window').width * 0.3),
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   scaleX: {
     from: 1,
@@ -139,7 +94,7 @@ var FadeToTheRight = {
   translateX: {
     from: 0,
     to: Math.round(SCREEN_WIDTH * 0.3),
-  },
+  }
 };
 
 var FadeIn = {
@@ -169,12 +124,12 @@ var FadeOut = {
 var ToTheLeft = {
   transformTranslate: {
     from: {x: 0, y: 0, z: 0},
-    to: {x: -SCREEN_WIDTH, y: 0, z: 0},
+    to: {x: -Dimensions.get('window').width, y: 0, z: 0},
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   opacity: {
     value: 1.0,
@@ -183,50 +138,24 @@ var ToTheLeft = {
 
   translateX: {
     from: 0,
-    to: -SCREEN_WIDTH,
+    to: -Dimensions.get('window').width,
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
-  },
-};
-
-var ToTheRight = {
-  transformTranslate: {
-    from: {x: 0, y: 0, z: 0},
-    to: {x: SCREEN_WIDTH, y: 0, z: 0},
-    min: 0,
-    max: 1,
-    type: 'linear',
-    extrapolate: true,
-    round: PIXEL_RATIO,
-  },
-  opacity: {
-    value: 1.0,
-    type: 'constant',
-  },
-
-  translateX: {
-    from: 0,
-    to: SCREEN_WIDTH,
-    min: 0,
-    max: 1,
-    type: 'linear',
-    extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
 };
 
 var ToTheUp = {
   transformTranslate: {
     from: {x: 0, y: 0, z: 0},
-    to: {x: 0, y: -SCREEN_HEIGHT, z: 0},
+    to: {x: 0, y: -Dimensions.get('window').height, z: 0},
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   opacity: {
     value: 1.0,
@@ -234,24 +163,24 @@ var ToTheUp = {
   },
   translateY: {
     from: 0,
-    to: -SCREEN_HEIGHT,
+    to: -Dimensions.get('window').height,
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
 };
 
 var ToTheDown = {
   transformTranslate: {
     from: {x: 0, y: 0, z: 0},
-    to: {x: 0, y: SCREEN_HEIGHT, z: 0},
+    to: {x: 0, y: Dimensions.get('window').height, z: 0},
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   opacity: {
     value: 1.0,
@@ -259,12 +188,12 @@ var ToTheDown = {
   },
   translateY: {
     from: 0,
-    to: SCREEN_HEIGHT,
+    to: Dimensions.get('window').height,
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
 };
 
@@ -275,23 +204,23 @@ var FromTheRight = {
   },
 
   transformTranslate: {
-    from: {x: SCREEN_WIDTH, y: 0, z: 0},
+    from: {x: Dimensions.get('window').width, y: 0, z: 0},
     to: {x: 0, y: 0, z: 0},
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
 
   translateX: {
-    from: SCREEN_WIDTH,
+    from: Dimensions.get('window').width,
     to: 0,
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
 
   scaleX: {
@@ -313,7 +242,7 @@ var FromTheLeft = {
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   translateX: {
     from: -SCREEN_WIDTH,
@@ -322,7 +251,7 @@ var FromTheLeft = {
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
 };
 
@@ -335,7 +264,7 @@ var FromTheDown = {
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   translateY: {
     from: SCREEN_HEIGHT,
@@ -344,7 +273,7 @@ var FromTheDown = {
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
 };
 
@@ -357,7 +286,7 @@ var FromTheTop = {
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   translateY: {
     from: -SCREEN_HEIGHT,
@@ -366,7 +295,7 @@ var FromTheTop = {
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
 };
 
@@ -380,7 +309,7 @@ var ToTheBack = {
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   transformScale: {
     from: {x: 1, y: 1, z: 1},
@@ -424,22 +353,22 @@ var FromTheFront = {
   },
 
   transformTranslate: {
-    from: {x: 0, y: SCREEN_HEIGHT, z: 0},
+    from: {x: 0, y: Dimensions.get('window').height, z: 0},
     to: {x: 0, y: 0, z: 0},
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   translateY: {
-    from: SCREEN_HEIGHT,
+    from: Dimensions.get('window').height,
     to: 0,
     min: 0,
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   scaleX: {
     value: 1,
@@ -475,7 +404,7 @@ var FromTheFrontAndroid = {
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
   translateY: {
     from: 100,
@@ -484,7 +413,7 @@ var FromTheFrontAndroid = {
     max: 1,
     type: 'linear',
     extrapolate: true,
-    round: PIXEL_RATIO,
+    round: PixelRatio.get(),
   },
 };
 
@@ -530,49 +459,19 @@ var BaseRightToLeftGesture = {
 var BaseDownUpGesture = {
   ...BaseLeftToRightGesture,
   fullDistance: SCREEN_HEIGHT,
-  direction: 'bottom-to-top',
+  direction: 'down-to-up',
 };
 
 var BaseUpDownGesture = {
   ...BaseLeftToRightGesture,
   fullDistance: SCREEN_HEIGHT,
-  direction: 'top-to-bottom',
+  direction: 'up-to-down',
 };
-
-// For RTL experiment, we need to swap all the Left and Right gesture and animation.
-// So we create a direction mapping for both LTR and RTL, and change left/right to start/end.
-let directionMapping = {
-  ToTheStartIOS: ToTheLeftIOS,
-  ToTheEndIOS: ToTheRightIOS,
-  FadeToTheStart: FadeToTheLeft,
-  FadeToTheEnd: FadeToTheRight,
-  ToTheStart: ToTheLeft,
-  ToTheEnd: ToTheRight,
-  FromTheStart: FromTheLeft,
-  FromTheEnd: FromTheRight,
-  BaseStartToEndGesture: BaseLeftToRightGesture,
-  BaseEndToStartGesture: BaseRightToLeftGesture,
-};
-
-if (IS_RTL) {
-  directionMapping = {
-    ToTheStartIOS: ToTheRightIOS,
-    ToTheEndIOS: ToTheLeftIOS,
-    FadeToTheStart: FadeToTheRight,
-    FadeToTheEnd: FadeToTheLeft,
-    ToTheStart: ToTheRight,
-    ToTheEnd: ToTheLeft,
-    FromTheStart: FromTheRight,
-    FromTheEnd: FromTheLeft,
-    BaseStartToEndGesture: BaseRightToLeftGesture,
-    BaseEndToStartGesture: BaseLeftToRightGesture,
-  };
-}
 
 var BaseConfig = {
   // A list of all gestures that are enabled on this scene
   gestures: {
-    pop: directionMapping.BaseStartToEndGesture,
+    pop: BaseLeftToRightGesture,
   },
 
   // Rebound spring parameters when transitioning FROM this scene
@@ -584,25 +483,15 @@ var BaseConfig = {
 
   // Animation interpolators for horizontal transitioning:
   animationInterpolators: {
-    into: buildStyleInterpolator(directionMapping.FromTheEnd),
-    out: buildStyleInterpolator(directionMapping.FadeToTheStart),
+    into: buildStyleInterpolator(FromTheRight),
+    out: buildStyleInterpolator(FadeToTheLeft),
   },
 };
 
 var NavigatorSceneConfigs = {
   PushFromRight: {
     ...BaseConfig,
-    animationInterpolators: {
-      into: buildStyleInterpolator(directionMapping.FromTheEnd),
-      out: buildStyleInterpolator(directionMapping.ToTheStartIOS),
-    },
-  },
-  PushFromLeft: {
-    ...BaseConfig,
-    animationInterpolators: {
-      into: buildStyleInterpolator(directionMapping.FromTheStart),
-      out: buildStyleInterpolator(directionMapping.ToTheEndIOS),
-    },
+    // We will want to customize this soon
   },
   FloatFromRight: {
     ...BaseConfig,
@@ -610,19 +499,16 @@ var NavigatorSceneConfigs = {
   },
   FloatFromLeft: {
     ...BaseConfig,
-    gestures: {
-      pop: directionMapping.BaseEndToStartGesture,
-    },
     animationInterpolators: {
-      into: buildStyleInterpolator(directionMapping.FromTheStart),
-      out: buildStyleInterpolator(directionMapping.FadeToTheEnd),
+      into: buildStyleInterpolator(FromTheLeft),
+      out: buildStyleInterpolator(FadeToTheRight),
     },
   },
   FloatFromBottom: {
     ...BaseConfig,
     gestures: {
       pop: {
-        ...directionMapping.BaseStartToEndGesture,
+        ...BaseLeftToRightGesture,
         edgeHitWidth: 150,
         direction: 'top-to-bottom',
         fullDistance: SCREEN_HEIGHT,
@@ -651,97 +537,32 @@ var NavigatorSceneConfigs = {
       out: buildStyleInterpolator(FadeOut),
     },
   },
-  SwipeFromLeft: {
-    ...BaseConfig,
-    gestures: {
-      jumpBack: {
-        ...directionMapping.BaseEndToStartGesture,
-        overswipe: BaseOverswipeConfig,
-        edgeHitWidth: null,
-        isDetachable: true,
-      },
-      jumpForward: {
-        ...directionMapping.BaseStartToEndGesture,
-        overswipe: BaseOverswipeConfig,
-        edgeHitWidth: null,
-        isDetachable: true,
-      },
-    },
-    animationInterpolators: {
-      into: buildStyleInterpolator(directionMapping.FromTheStart),
-      out: buildStyleInterpolator(directionMapping.ToTheEnd),
-    },
-  },
   HorizontalSwipeJump: {
     ...BaseConfig,
     gestures: {
       jumpBack: {
-        ...directionMapping.BaseStartToEndGesture,
+        ...BaseLeftToRightGesture,
         overswipe: BaseOverswipeConfig,
         edgeHitWidth: null,
         isDetachable: true,
       },
       jumpForward: {
-        ...directionMapping.BaseEndToStartGesture,
+        ...BaseRightToLeftGesture,
         overswipe: BaseOverswipeConfig,
         edgeHitWidth: null,
         isDetachable: true,
       },
     },
     animationInterpolators: {
-      into: buildStyleInterpolator(directionMapping.FromTheEnd),
-      out: buildStyleInterpolator(directionMapping.ToTheStart),
-    },
-  },
-  HorizontalSwipeJumpFromRight: {
-    ...BaseConfig,
-    gestures: {
-      jumpBack: {
-        ...directionMapping.BaseEndToStartGesture,
-        overswipe: BaseOverswipeConfig,
-        edgeHitWidth: null,
-        isDetachable: true,
-      },
-      jumpForward: {
-        ...directionMapping.BaseStartToEndGesture,
-        overswipe: BaseOverswipeConfig,
-        edgeHitWidth: null,
-        isDetachable: true,
-      },
-      pop: directionMapping.BaseEndToStartGesture,
-    },
-    animationInterpolators: {
-      into: buildStyleInterpolator(directionMapping.FromTheStart),
-      out: buildStyleInterpolator(directionMapping.FadeToTheEnd),
-    },
-  },
-  HorizontalSwipeJumpFromLeft: {
-    ...BaseConfig,
-    gestures: {
-      jumpBack: {
-        ...directionMapping.BaseEndToStartGesture,
-        overswipe: BaseOverswipeConfig,
-        edgeHitWidth: null,
-        isDetachable: true,
-      },
-      jumpForward: {
-        ...directionMapping.BaseStartToEndGesture,
-        overswipe: BaseOverswipeConfig,
-        edgeHitWidth: null,
-        isDetachable: true,
-      },
-      pop: directionMapping.BaseEndToStartGesture,
-    },
-    animationInterpolators: {
-      into: buildStyleInterpolator(directionMapping.FromTheStart),
-      out: buildStyleInterpolator(directionMapping.ToTheEnd),
+      into: buildStyleInterpolator(FromTheRight),
+      out: buildStyleInterpolator(ToTheLeft),
     },
   },
   VerticalUpSwipeJump: {
     ...BaseConfig,
     gestures: {
       jumpBack: {
-        ...BaseUpDownGesture,
+        ...BaseDownUpGesture,
         overswipe: BaseOverswipeConfig,
         edgeHitWidth: null,
         isDetachable: true,
@@ -762,7 +583,7 @@ var NavigatorSceneConfigs = {
     ...BaseConfig,
     gestures: {
       jumpBack: {
-        ...BaseDownUpGesture,
+        ...BaseUpDownGesture,
         overswipe: BaseOverswipeConfig,
         edgeHitWidth: null,
         isDetachable: true,

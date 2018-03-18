@@ -9,10 +9,12 @@
  */
 'use strict';
 
-import Dimensions from 'ReactDimensions';
-import NavigatorNavigationBarStylesIOS from 'ReactNavigatorNavigationBarStylesIOS';
-import buildStyleInterpolator from './polyfills/buildStyleInterpolator';
-import merge from './polyfills/merge';
+import {
+  Dimensions
+} from 'react-native'
+import NavigatorNavigationBarStylesIOS from './NavigatorNavigationBarStylesIOS';
+import buildStyleInterpolator from './buildStyleInterpolator';
+import merge from './merge';
 
 var SCREEN_WIDTH = Dimensions.get('window').width;
 var STATUS_BAR_HEIGHT = NavigatorNavigationBarStylesIOS.General.StatusBarHeight;

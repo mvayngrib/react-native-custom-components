@@ -8,6 +8,7 @@
   },
   "main": "src/CustomComponents.js",
   "dependencies": {
+    "autobind-decorator": "^2.1.0",
     "create-react-class": "15.6.0",
     "fbjs": "~0.8.9",
     "history": "^1.12.6",
