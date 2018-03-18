@@ -19,7 +19,7 @@ import {
 } from 'react-native';
 
 import PropTypes from 'prop-types'
-import TimerMixin from 'react-timer-mixin';
+// import TimerMixin from 'react-timer-mixin';
 import invariant from 'invariant';
 import rebound from 'rebound';
 import createHistory from 'history/lib/createHashHistory';
@@ -28,7 +28,7 @@ import NavigationContext from './NavigationContext';
 import NavigatorBreadcrumbNavigationBar from './NavigatorBreadcrumbNavigationBar';
 import NavigatorNavigationBar from './NavigatorNavigationBar';
 import NavigatorSceneConfigs from './NavigatorSceneConfigs';
-import Subscribable from './Subscribable';
+// import Subscribable from './Subscribable';
 import clamp from './clamp';
 import flattenStyle from './flattenStyle';
 
@@ -232,7 +232,7 @@ class Navigator extends Component {
     sceneStyle: ViewPropTypes.style,
   };
 
-  static mixins = [TimerMixin, Subscribable.Mixin]
+  // static mixins = [TimerMixin, Subscribable.Mixin]
 
   static defaultProps = {
     configureScene: () => NavigatorSceneConfigs.PushFromRight,
@@ -343,11 +343,11 @@ class Navigator extends Component {
 
   }
 
-  _nextRouteID (replace) {
+  _nextRouteID = (replace) => {
     return this.state.routeStack.length - (replace ? 1 : 0)
   }
 
-  _getRouteID (route, action) {
+  _getRouteID = (route, action) => {
     if (route === null || typeof route !== 'object') {
       return String(route);
     }
@@ -362,7 +362,7 @@ class Navigator extends Component {
    * not animate, immediately replaces and rerenders navigation bar and stack
    * items.
    */
-  immediatelyResetRouteStack(nextRouteStack) {
+  immediatelyResetRouteStack = (nextRouteStack) => {
     console.warn('navigator.immediatelyResetRouteStack breaks the back button!')
 
     const self = this
@@ -382,7 +382,7 @@ class Navigator extends Component {
     });
   }
 
-  _transitionTo(destIndex, velocity, jumpSpringTo, cb) {
+  _transitionTo = (destIndex, velocity, jumpSpringTo, cb) => {
     if (destIndex === this.state.presentedIndex) {
       this._hideScenes();
       return;
@@ -428,7 +428,7 @@ class Navigator extends Component {
    * This happens for each frame of either a gesture or a transition. If both are
    * happening, we only set values for the transition and the gesture will catch up later
    */
-  _handleSpringUpdate() {
+  _handleSpringUpdate = () => {
     // Prioritize handling transition in progress over a gesture:
     if (this.state.transitionFromIndex != null) {
       this._transitionBetween(
@@ -449,7 +449,7 @@ class Navigator extends Component {
   /**
    * This happens at the end of a transition started by transitionTo, and when the spring catches up to a pending gesture
    */
-  _completeTransition() {
+  _completeTransition = () => {
     if (this.spring.getCurrentValue() !== 1 && this.spring.getCurrentValue() !== 0) {
       // The spring has finished catching up to a gesture in progress. Remove the pending progress
       // and we will be in a normal activeGesture state
@@ -497,7 +497,7 @@ class Navigator extends Component {
     }
   }
 
-  _emitDidFocus(route) {
+  _emitDidFocus = (route) => {
     this.navigationContext.emit('didfocus', {route: route});
 
     if (this.props.onDidFocus) {
@@ -505,7 +505,7 @@ class Navigator extends Component {
     }
   }
 
-  _emitWillFocus(route) {
+  _emitWillFocus = (route) => {
     this.navigationContext.emit('willfocus', {route: route});
 
     let navBar = this._navBar;
@@ -520,7 +520,7 @@ class Navigator extends Component {
   /**
    * Hides all scenes that we are not currently on, gesturing to, or transitioning from
    */
-  _hideScenes() {
+  _hideScenes = () => {
     let gesturingToIndex = null;
     if (this.state.activeGesture) {
       gesturingToIndex = this.state.presentedIndex + this._deltaForGestureAction(this.state.activeGesture);
@@ -538,7 +538,7 @@ class Navigator extends Component {
   /**
    * Push a scene off the screen, so that opacity:0 scenes will not block touches sent to the presented scenes
    */
-  _disableScene(sceneIndex) {
+  _disableScene = (sceneIndex) => {
     this.refs['scene_' + sceneIndex] &&
     this.refs['scene_' + sceneIndex].setNativeProps(SCENE_DISABLED_NATIVE_PROPS);
   }
@@ -546,7 +546,7 @@ class Navigator extends Component {
   /**
    * Put the scene back into the state as defined by props.sceneStyle, so transitions can happen normally
    */
-  _enableScene(sceneIndex) {
+  _enableScene = (sceneIndex) => {
     // First, determine what the defined styles are for scenes in this navigator
     let sceneStyle = flattenStyle([styles.baseScene, this.props.sceneStyle]);
     // Then restore the pointer events and top value for this scene
@@ -571,7 +571,7 @@ class Navigator extends Component {
     this.refs['scene_' + sceneIndex].setNativeProps(sceneNativeProps);
   }
 
-  _onAnimationStart() {
+  _onAnimationStart = () => {
     let fromIndex = this.state.presentedIndex;
     let toIndex = this.state.presentedIndex;
     if (this.state.transitionFromIndex != null) {
@@ -587,7 +587,7 @@ class Navigator extends Component {
     }
   }
 
-  _onAnimationEnd() {
+  _onAnimationEnd = () => {
     let max = this.state.routeStack.length - 1;
     for (let index = 0; index <= max; index++) {
       this._setRenderSceneToHardwareTextureAndroid(index, false);
@@ -607,11 +607,11 @@ class Navigator extends Component {
     viewAtIndex.setNativeProps( {renderToHardwareTextureAndroid: shouldRenderToHardwareTexture});
   }
 
-  _handleTouchStart() {
+  _handleTouchStart = () => {
     this._eligibleGestures = GESTURE_ACTIONS;
   }
 
-  _handleMoveShouldSetPanResponder(e, gestureState) {
+  _handleMoveShouldSetPanResponder = (e, gestureState) => {
     let sceneConfig = this.state.sceneConfigStack[this.state.presentedIndex];
     if (!sceneConfig) {
       return false;
@@ -620,7 +620,7 @@ class Navigator extends Component {
     return !!this._expectingGestureGrant;
   }
 
-  _doesGestureOverswipe(gestureName) {
+  _doesGestureOverswipe = (gestureName) => {
     let wouldOverswipeBack = this.state.presentedIndex <= 0 &&
       (gestureName === 'pop' || gestureName === 'jumpBack');
     let wouldOverswipeForward = this.state.presentedIndex >= this.state.routeStack.length - 1 &&
@@ -628,7 +628,7 @@ class Navigator extends Component {
     return wouldOverswipeForward || wouldOverswipeBack;
   }
 
-  _handlePanResponderGrant(e, gestureState) {
+  _handlePanResponderGrant = (e, gestureState) => {
     invariant(
       this._expectingGestureGrant,
       'Responder granted unexpectedly.'
@@ -638,7 +638,7 @@ class Navigator extends Component {
     this._expectingGestureGrant = null;
   }
 
-  _deltaForGestureAction(gestureAction) {
+  _deltaForGestureAction = (gestureAction) => {
     switch (gestureAction) {
       case 'pop':
       case 'jumpBack':
@@ -651,7 +651,7 @@ class Navigator extends Component {
     }
   }
 
-  _handlePanResponderRelease(e, gestureState) {
+  _handlePanResponderRelease = (e, gestureState) => {
     let sceneConfig = this.state.sceneConfigStack[this.state.presentedIndex];
     let releaseGestureAction = this.state.activeGesture;
     if (!releaseGestureAction) {
@@ -713,7 +713,7 @@ class Navigator extends Component {
     this._detachGesture();
   }
 
-  _handlePanResponderTerminate(e, gestureState) {
+  _handlePanResponderTerminate = (e, gestureState) => {
     if (this.state.activeGesture == null) {
       return;
     }
@@ -729,19 +729,19 @@ class Navigator extends Component {
     );
   }
 
-  _attachGesture(gestureId) {
+  _attachGesture = (gestureId) => {
     this.state.activeGesture = gestureId;
     let gesturingToIndex = this.state.presentedIndex + this._deltaForGestureAction(this.state.activeGesture);
     this._enableScene(gesturingToIndex);
   }
 
-  _detachGesture() {
+  _detachGesture = () => {
     this.state.activeGesture = null;
     this.state.pendingGestureProgress = null;
     this._hideScenes();
   }
 
-  _handlePanResponderMove(e, gestureState) {
+  _handlePanResponderMove = (e, gestureState) => {
     let sceneConfig = this.state.sceneConfigStack[this.state.presentedIndex];
     if (this.state.activeGesture) {
       let gesture = sceneConfig.gestures[this.state.activeGesture];
@@ -753,7 +753,7 @@ class Navigator extends Component {
     }
   }
 
-  _moveAttachedGesture(gesture, gestureState) {
+  _moveAttachedGesture = (gesture, gestureState) => {
     let isTravelVertical = gesture.direction === 'top-to-bottom' || gesture.direction === 'bottom-to-top';
     let isTravelInverted = gesture.direction === 'right-to-left' || gesture.direction === 'bottom-to-top';
     let distance = isTravelVertical ? gestureState.dy : gestureState.dx;
@@ -786,7 +786,7 @@ class Navigator extends Component {
     }
   }
 
-  _matchGestureAction(eligibleGestures, gestures, gestureState) {
+  _matchGestureAction = (eligibleGestures, gestures, gestureState) => {
     if (!gestures) {
       return null;
     }
@@ -835,7 +835,7 @@ class Navigator extends Component {
     return matchedGesture;
   }
 
-  _transitionSceneStyle(fromIndex, toIndex, progress, index) {
+  _transitionSceneStyle = (fromIndex, toIndex, progress, index) => {
     let viewAtIndex = this.refs['scene_' + index];
     if (viewAtIndex === null || viewAtIndex === undefined) {
       return;
@@ -858,7 +858,7 @@ class Navigator extends Component {
     }
   }
 
-  _transitionBetween(fromIndex, toIndex, progress) {
+  _transitionBetween = (fromIndex, toIndex, progress) => {
     this._transitionSceneStyle(fromIndex, toIndex, progress, fromIndex);
     this._transitionSceneStyle(fromIndex, toIndex, progress, toIndex);
     let navBar = this._navBar;
@@ -867,11 +867,11 @@ class Navigator extends Component {
     }
   }
 
-  _handleResponderTerminationRequest() {
+  _handleResponderTerminationRequest = () => {
     return false;
   }
 
-  _getDestIndexWithinBounds(n) {
+  _getDestIndexWithinBounds = (n) => {
     let currentIndex = this.state.presentedIndex;
     let destIndex = currentIndex + n;
     invariant(
@@ -886,7 +886,7 @@ class Navigator extends Component {
     return destIndex;
   }
 
-  _jumpN(n) {
+  _jumpN = (n) => {
     let destIndex = this._getDestIndexWithinBounds(n);
     this._enableScene(destIndex);
     const route = this.state.routeStack[destIndex]
@@ -906,7 +906,7 @@ class Navigator extends Component {
     // }
   }
 
-  jumpTo(route) {
+  jumpTo = (route) => {
     let destIndex = this.state.routeStack.indexOf(route);
     invariant(
       destIndex !== -1,
@@ -915,15 +915,15 @@ class Navigator extends Component {
     this._jumpN(destIndex - this.state.presentedIndex);
   }
 
-  jumpForward() {
+  jumpForward = () => {
     this._jumpN(1);
   }
 
-  jumpBack() {
+  jumpBack = () => {
     this._jumpN(-1);
   }
 
-  push(route) {
+  push = (route) => {
     invariant(!!route, 'Must supply route to push');
     let activeLength = this.state.presentedIndex + 1;
     let activeStack = this.state.routeStack.slice(0, activeLength);
@@ -945,7 +945,7 @@ class Navigator extends Component {
     });
   }
 
-  _popN(n) {
+  _popN = (n) => {
     if (n === 0) {
       return;
     }
@@ -967,7 +967,7 @@ class Navigator extends Component {
     );
   }
 
-  pop() {
+  pop = () => {
     if (this.state.transitionQueue.length) {
       // This is the workaround to prevent user from firing multiple `pop()`
       // calls that may pop the routes beyond the limit.
@@ -1033,22 +1033,22 @@ class Navigator extends Component {
   /**
    * Replaces the current scene in the stack.
    */
-  replace(route) {
+  replace = (route) => {
     this.replaceAtIndex(route, this.state.presentedIndex);
   }
 
   /**
    * Replace the current route's parent.
    */
-  replacePrevious(route) {
+  replacePrevious = (route) => {
     this.replaceAtIndex(route, this.state.presentedIndex - 1);
   }
 
-  popToTop() {
+  popToTop = () => {
     this.popToRoute(this.state.routeStack[0]);
   }
 
-  popToRoute(route) {
+  popToRoute = (route) => {
     let indexOfRoute = this.state.routeStack.indexOf(route);
     invariant(
       indexOfRoute !== -1,
@@ -1058,7 +1058,7 @@ class Navigator extends Component {
     this._popN(numToPop);
   }
 
-  replacePreviousAndPop(route) {
+  replacePreviousAndPop = (route) => {
     if (this.state.routeStack.length < 2) {
       return;
     }
@@ -1066,7 +1066,7 @@ class Navigator extends Component {
     this.pop();
   }
 
-  resetTo(route) {
+  resetTo = (route) => {
     invariant(!!route, 'Must supply route to push');
     this.replaceAtIndex(route, 0, () => {
       // Do not use popToRoute here, because race conditions could prevent the
@@ -1077,12 +1077,12 @@ class Navigator extends Component {
     });
   }
 
-  getCurrentRoutes() {
+  getCurrentRoutes = () => {
     // Clone before returning to avoid caller mutating the stack
     return this.state.routeStack.slice();
   }
 
-  _cleanScenesPastIndex(index) {
+  _cleanScenesPastIndex = (index) => {
     let newStackLength = index + 1;
     // Remove any unneeded rendered routes.
     if (newStackLength < this.state.routeStack.length) {
@@ -1094,7 +1094,7 @@ class Navigator extends Component {
     }
   }
 
-  _renderScene(route, i) {
+  _renderScene = (route, i) => {
     // let disabledSceneStyle = null;
     let pointerEvents = 'auto';
     if (i !== this.state.presentedIndex) {
@@ -1120,7 +1120,7 @@ class Navigator extends Component {
     );
   }
 
-  _renderNavigationBar() {
+  _renderNavigationBar = () => {
     if (!this.props.navigationBar) {
       return null;
     }
@@ -1163,7 +1163,7 @@ class Navigator extends Component {
     );
   }
 
-  _getNavigationContext() {
+  _getNavigationContext = () => {
     if (!this._navigationContext) {
       this._navigationContext = new NavigationContext();
     }
