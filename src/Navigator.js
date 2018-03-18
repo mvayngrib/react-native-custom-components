@@ -38,6 +38,11 @@ import {
   ViewPropTypes,
 } from 'react-native';
 
+import createHistory from 'history/lib/createHashHistory';
+
+let history = createHistory();
+let _unlisten;
+
 var AnimationsDebugModule = NativeModules.AnimationsDebugModule;
 var InteractionMixin = require('./InteractionMixin');
 var NavigationContext = require('./NavigationContext');
@@ -71,29 +76,10 @@ var SCENE_DISABLED_NATIVE_PROPS = {
   },
 };
 
-var __uid = 0;
-function getuid() {
-  return __uid++;
-}
-
-function getRouteID(route) {
-  if (route === null || typeof route !== 'object') {
-    return String(route);
-  }
-
-  var key = '__navigatorRouteID';
-
-  if (!route.hasOwnProperty(key)) {
-    Object.defineProperty(route, key, {
-      enumerable: false,
-      configurable: false,
-      writable: false,
-      value: getuid(),
-    });
-  }
-  return route[key];
-}
-
+// var __uid = 0;
+// function getuid() {
+//   return __uid++;
+// }
 
 const BASE_SCENE_STYLE = {
   position: 'absolute',
@@ -482,7 +468,23 @@ var Navigator = createReactClass({
     this._isMounted = true;
     this._handleSpringUpdate();
     this._emitDidFocus(this.state.routeStack[this.state.presentedIndex]);
-    this._enableTVEventHandler();
+    _unlisten = history.listen(function(location) {
+      let destIndex = 0;
+      if (location.pathname.indexOf('/scene_') != -1) {
+        destIndex = parseInt(location.pathname.replace('/scene_', ''));
+      }
+      if (destIndex < this.state.routeStack.length) {
+        this.hashChanged = true;
+        this._jumpN(destIndex - this.state.presentedIndex);
+        // to support forward button, uncomment the if
+        // BUT it'll require your route components to support componentWillReceiveProps
+        // if (destIndex > this.state.presentedIndex) {
+          this._cleanScenesPastIndex(destIndex);
+        // }
+
+        this.hashChanged = false;
+      }
+    }.bind(this));
   },
 
   componentWillUnmount: function() {
@@ -493,12 +495,15 @@ var Navigator = createReactClass({
     }
 
     this.spring.destroy();
+    _unlisten();
+  },
 
-    if (this._interactionHandle) {
-      this.clearInteractionHandle(this._interactionHandle);
+  _getRouteID: function (route) {
+    if (route === null || typeof route !== 'object') {
+      return String(route);
     }
 
-    this._disableTVEventHandler();
+    return this.state.routeStack.indexOf(route)
   },
 
   /**
@@ -1054,6 +1059,14 @@ var Navigator = createReactClass({
     this._enableScene(destIndex);
     this._emitWillFocus(this.state.routeStack[destIndex]);
     this._transitionTo(destIndex);
+    if (!this.hashChanged) {
+      if (n > 0) {
+        history.pushState({ index: destIndex }, '/scene_' + this._getRouteID(route));
+      } else {
+        history.go(n);
+      }
+      return;
+    }
   },
 
   /**
@@ -1103,6 +1116,7 @@ var Navigator = createReactClass({
       routeStack: nextStack,
       sceneConfigStack: nextAnimationConfigStack,
     }, () => {
+      history.pushState({ index: destIndex }, '/scene_' + this._getRouteID(route));
       this._enableScene(destIndex);
       this._transitionTo(destIndex, nextSceneConfig.defaultTransitionVelocity);
     });
@@ -1133,6 +1147,7 @@ var Navigator = createReactClass({
       popSceneConfig.defaultTransitionVelocity,
       null, // no spring jumping
       () => {
+        history.go(-n);
         this._cleanScenesPastIndex(popIndex);
       }
     );
@@ -1172,6 +1187,11 @@ var Navigator = createReactClass({
       return;
     }
 
+    const replaceCurrent = index === this.state.presentedIndex
+    if (!replaceCurrent) {
+      console.warn('navigator.replaceAtIndex for the non-current route breaks the back button!')
+    }
+
     var nextRouteStack = this.state.routeStack.slice();
     var nextAnimationModeStack = this.state.sceneConfigStack.slice();
     nextRouteStack[index] = route;
@@ -1187,6 +1207,11 @@ var Navigator = createReactClass({
       if (index === this.state.presentedIndex) {
         this._emitDidFocus(route);
       }
+
+      if (replaceCurrent) {
+        history.replaceState({ index }, '/scene_' + this._getRouteID(route));
+      }
+
       cb && cb();
     });
   },
@@ -1283,7 +1308,7 @@ var Navigator = createReactClass({
     return (
       <View
         collapsable={false}
-        key={'scene_' + getRouteID(route)}
+        key={'scene_' + this._getRouteID(route)}
         ref={(scene) => {
           this._sceneRefs[i] = scene;
         }}
@@ -1315,27 +1340,6 @@ var Navigator = createReactClass({
       navigator: this._navigationBarNavigator,
       navState: this.state,
     });
-  },
-
-  _tvEventHandler: TVEventHandler,
-
-  _enableTVEventHandler: function() {
-    if (!TVEventHandler) {
-      return;
-    }
-    this._tvEventHandler = new TVEventHandler();
-    this._tvEventHandler.enable(this, function(cmp, evt) {
-      if (evt && evt.eventType === 'menu') {
-        cmp.pop();
-      }
-    });
-  },
-
-  _disableTVEventHandler: function() {
-    if (this._tvEventHandler) {
-      this._tvEventHandler.disable();
-      delete this._tvEventHandler;
-    }
   },
 
   render: function() {

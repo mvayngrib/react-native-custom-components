@@ -33,7 +33,7 @@ import {
 } from 'react-native';
 import React from 'react';
 
-const NavigatorBreadcrumbNavigationBarStyles = require('./NavigatorBreadcrumbNavigationBarStyles');
+const NavigatorBreadcrumbNavigationBarStyles = require('./NavigatorBreadcrumbNavigationBarStyles.ios');
 const NavigatorNavigationBarStylesAndroid = require('./NavigatorNavigationBarStylesAndroid');
 const NavigatorNavigationBarStylesIOS = require('./NavigatorNavigationBarStylesIOS');
 
