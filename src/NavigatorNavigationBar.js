@@ -198,8 +198,11 @@ class NavigatorNavigationBar extends Component {
     var initialStage = index === navStatePresentedIndex(this.props.navState) ?
       this.props.navigationStyles.Stages.Center :
       this.props.navigationStyles.Stages.Left;
+
+    var key = `${componentName}_${index}`
     rendered = (
       <View
+        key={key}
         ref={(ref) => {
           this._components[componentName] = this._components[componentName].set(route, ref);
         }}
