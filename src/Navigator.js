@@ -787,7 +787,7 @@ class Navigator extends Component {
   }
 
   _matchGestureAction = (eligibleGestures, gestures, gestureState) => {
-    if (!gestures) {
+    if (!(gestures && eligibleGestures)) {
       return null;
     }
     let matchedGesture = null;
