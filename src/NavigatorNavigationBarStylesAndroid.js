@@ -29,8 +29,8 @@ var buildStyleInterpolator = require('./buildStyleInterpolator');
 var merge = require('./merge');
 
 // Android Material Design
-var NAV_BAR_HEIGHT = 56;
-var TITLE_LEFT = 72;
+var NAV_BAR_HEIGHT = 60; //56;
+var TITLE_LEFT = 50; //72;
 var BUTTON_SIZE = 24;
 var TOUCH_TARGT_SIZE = 48;
 var BUTTON_HORIZONTAL_MARGIN = 16;
