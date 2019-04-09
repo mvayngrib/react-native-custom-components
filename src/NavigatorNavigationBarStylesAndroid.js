@@ -61,6 +61,7 @@ var BASE_STYLES = {
     position: 'absolute',
     top: 0,
     right: BUTTON_EFFECTIVE_MARGIN,
+    left: 0,
     overflow: 'hidden',
     alignItems: 'flex-end',
     height: NAV_ELEMENT_HEIGHT,
