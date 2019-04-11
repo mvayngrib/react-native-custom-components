@@ -143,10 +143,10 @@ function buildSceneInterpolators(startStyles, endStyles) {
         max: 1,
         round: opacityRatio,
       },
-      left: {
+      right: {
         type: 'linear',
-        from: startStyles.RightButton.left,
-        to: endStyles.RightButton.left,
+        from: startStyles.RightButton.right,
+        to: endStyles.RightButton.right,
         min: 0,
         max: 1,
         extrapolate: true,
