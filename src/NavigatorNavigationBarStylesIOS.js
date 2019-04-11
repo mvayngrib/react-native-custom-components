@@ -81,17 +81,17 @@ var Stages = {
   Left: {
     Title: merge(BASE_STYLES.Title, { left: -SCREEN_WIDTH / 2, opacity: 0 }),
     LeftButton: merge(BASE_STYLES.LeftButton, { left: 0, opacity: 0 }),
-    RightButton: merge(BASE_STYLES.RightButton, { opacity: 0, left: -SCREEN_WIDTH/2 }),
+    RightButton: merge(BASE_STYLES.RightButton, { opacity: 0 }),
   },
   Center: {
     Title: merge(BASE_STYLES.Title, { left: 0, opacity: 1 }),
     LeftButton: merge(BASE_STYLES.LeftButton, { left: 0, opacity: 1 }),
-    RightButton: merge(BASE_STYLES.RightButton, { opacity: 1, left: 0 }),
+    RightButton: merge(BASE_STYLES.RightButton, { opacity: 1 }),
   },
   Right: {
     Title: merge(BASE_STYLES.Title, { left: SCREEN_WIDTH / 2, opacity: 0 }),
     LeftButton: merge(BASE_STYLES.LeftButton, { left: 0, opacity: 0 }),
-    RightButton: merge(BASE_STYLES.RightButton, { opacity: 0, left: -SCREEN_WIDTH/2  }),
+    RightButton: merge(BASE_STYLES.RightButton, { opacity: 0 }),
   },
 };
 
@@ -143,10 +143,10 @@ function buildSceneInterpolators(startStyles, endStyles) {
         max: 1,
         round: opacityRatio,
       },
-      left: {
+      right: {
         type: 'linear',
-        from: startStyles.RightButton.left,
-        to: endStyles.RightButton.left,
+        from: startStyles.RightButton.right,
+        to: endStyles.RightButton.right,
         min: 0,
         max: 1,
         extrapolate: true,

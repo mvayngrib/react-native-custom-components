@@ -61,7 +61,6 @@ var BASE_STYLES = {
     position: 'absolute',
     top: 0,
     right: BUTTON_EFFECTIVE_MARGIN,
-    left: 0,
     overflow: 'hidden',
     alignItems: 'flex-end',
     height: NAV_ELEMENT_HEIGHT,
@@ -142,10 +141,10 @@ function buildSceneInterpolators(startStyles, endStyles) {
         max: 1,
         round: opacityRatio,
       },
-      left: {
+      right: {
         type: 'linear',
-        from: startStyles.RightButton.left,
-        to: endStyles.RightButton.left,
+        from: startStyles.RightButton.right,
+        to: endStyles.RightButton.right,
         min: 0,
         max: 1,
         extrapolate: true,
