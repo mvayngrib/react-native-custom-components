@@ -1005,10 +1005,14 @@ var Navigator = createReactClass({
     }
     // Use toIndex animation when we move forwards. Use fromIndex when we move back
     var sceneConfigIndex = fromIndex < toIndex ? toIndex : fromIndex;
-    var sceneConfig = this.state.sceneConfigStack[sceneConfigIndex];
+    var { sceneConfigStack } = this.state
+    if (sceneConfigIndex > sceneConfigStack.length)
+      sceneConfigIndex = sceneConfigStack.length - 1
+
+    var sceneConfig = sceneConfigStack[sceneConfigIndex];
     // this happens for overswiping when there is no scene at toIndex
     if (!sceneConfig) {
-      sceneConfig = this.state.sceneConfigStack[sceneConfigIndex - 1];
+      sceneConfig = sceneConfigStack[sceneConfigIndex - 1];
     }
     var styleToUse = {};
     var useFn = index < fromIndex || index < toIndex ?
