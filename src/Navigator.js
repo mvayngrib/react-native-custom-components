@@ -842,10 +842,14 @@ class Navigator extends Component {
     }
     // Use toIndex animation when we move forwards. Use fromIndex when we move back
     let sceneConfigIndex = fromIndex < toIndex ? toIndex : fromIndex;
-    let sceneConfig = this.state.sceneConfigStack[sceneConfigIndex];
+    var { sceneConfigStack } = this.state
+
+    if (sceneConfigIndex > sceneConfigStack.length)
+      sceneConfigIndex = sceneConfigStack.length - 1
+    let sceneConfig = sceneConfigStack[sceneConfigIndex];
     // this happens for overswiping when there is no scene at toIndex
     if (!sceneConfig) {
-      sceneConfig = this.state.sceneConfigStack[sceneConfigIndex - 1];
+      sceneConfig = sceneConfigStack[sceneConfigIndex - 1];
     }
     let styleToUse = {};
     let useFn = index < fromIndex || index < toIndex ?
