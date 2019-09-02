@@ -64,18 +64,18 @@ function calcStyles (screenWidth) {
   const Stages = {
     Left: {
       Title: merge(BASE_STYLES.Title, { left: - screenWidth / 2, opacity: 0 }),
-      LeftButton: merge(BASE_STYLES.LeftButton, { left: - screenWidth / 3, opacity: 1 }),
-      RightButton: merge(BASE_STYLES.RightButton, { left: screenWidth / 3, opacity: 0 }),
+      LeftButton: merge(BASE_STYLES.LeftButton, { left: 0, opacity: 1 }),
+      RightButton: merge(BASE_STYLES.RightButton, { opacity: 0 }),
     },
     Center: {
       Title: merge(BASE_STYLES.Title, { left: 0, opacity: 1 }),
       LeftButton: merge(BASE_STYLES.LeftButton, { left: 0, opacity: 1 }),
-      RightButton: merge(BASE_STYLES.RightButton, { left: 2 * screenWidth / 3 - 0, opacity: 1 }),
+      RightButton: merge(BASE_STYLES.RightButton, { left: screenWidth - 90, opacity: 1 }),
     },
     Right: {
       Title: merge(BASE_STYLES.Title, { left: screenWidth / 2, opacity: 0 }),
       LeftButton: merge(BASE_STYLES.LeftButton, { left: 0, opacity: 0 }),
-      RightButton: merge(BASE_STYLES.RightButton, { left: screenWidth, opacity: 0 }),
+      RightButton: merge(BASE_STYLES.RightButton, { opacity: 0 }),
     },
   }
 
