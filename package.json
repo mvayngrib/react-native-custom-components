@@ -10,7 +10,7 @@
   "dependencies": {
     "autobind-decorator": "^2.1.0",
     "create-react-class": "15.6.0",
-    "fbjs": "~0.8.9",
+    "fbjs": "~0.8.17",
     "history": "^1.12.6",
     "immutable": "~3.7.6",
     "prop-types": "^15.5.10",
